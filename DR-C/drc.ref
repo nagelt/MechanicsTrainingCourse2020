@@ -114,8 +114,8 @@
 
                         <property>
                             <name>biot_coefficient</name>
-                            <type>Parameter</type>
-                            <parameter_name>biot_parameter</parameter_name>
+                            <type>Constant</type>
+                            <value>1.0</value>
                         </property>
 
                         <property>
@@ -161,11 +161,9 @@
             <type>VTK</type>
             <prefix>result_drc</prefix>
 			<timesteps>
-                <pair>
-                    <repeat>10</repeat><each_steps>1</each_steps>
-                    <repeat>10</repeat><each_steps>5</each_steps>
-                    <repeat>10</repeat><each_steps>20</each_steps>
-                </pair>
+                    <pair><repeat>10</repeat><each_steps>1</each_steps></pair>
+                    <pair><repeat>10</repeat><each_steps>5</each_steps></pair>
+                    <pair><repeat>10</repeat><each_steps>20</each_steps></pair>
             </timesteps>
             <variables>
                 <variable>displacement</variable>
