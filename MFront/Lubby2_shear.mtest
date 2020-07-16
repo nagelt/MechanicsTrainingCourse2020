@@ -1,0 +1,28 @@
+@Author TN;
+@Date   01/04/2020;
+@Description{
+
+};
+@Behaviour<generic> 'src/libBehaviour.so' 'Lubby2';
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain<function> 'EXX' '0.0';
+@ImposedStrain<function> 'EYY' '0.0';
+@ImposedStrain<function> 'EZZ' '0.0';
+@ImposedStrain<function> 'EXZ' '0.0';
+@ImposedStrain<function> 'EYZ' '0.0';
+@ImposedStress 'SXY' {0:0, 1:5, 100:5};
+@Times {0.,1296000 in 21600};
+
+@Real 'GM0' 9.54e3;
+@Real 'KM0' 2.78e4;
+
+
+@MaterialProperty<function> 'YoungModulus' '(3 * GM0 * KM0) / (3 * KM0 - GM0)'; 
+@MaterialProperty<function> 'PoissonRatio' '(3 * KM0 - 2 * GM0) / (2 * GM0 - 6 * KM0)'; 
+@MaterialProperty<constant> 'KelvinShearModulus' 6.27e4;
+@MaterialProperty<constant> 'KelvinViscosity' 1.66e5;
+@MaterialProperty<constant> 'MaxwellViscosity' 4.03e7;
+@MaterialProperty<constant> 'KelvinElasticParameter' -0.254;
+@MaterialProperty<constant> 'KelvinViscoParameter' -0.267;
+@MaterialProperty<constant> 'MaxwellViscoParameter' -0.327;
+
