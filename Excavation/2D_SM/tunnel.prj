@@ -12,7 +12,7 @@
         <process>
             <name>SD</name>
             <type>SMALL_DEFORMATION</type>
-            <integration_order>4</integration_order>
+            <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
                 <behaviour>MohrCoulombAbboSloanAniso</behaviour>
@@ -47,7 +47,7 @@
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
             <!--Initial Sterss-->
-            <initial_stress>nonequilibrium_stress</initial_stress>
+            <initial_stress>initial_stress</initial_stress>
         </process>
     </processes>
     <time_loop>
@@ -57,7 +57,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-10</abstol>
+                    <abstol>1e-8</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -87,7 +87,10 @@
                 <variable>displacement</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
+                <variable>ElasticStrain</variable>
+                <variable>EquivalentPlasticStrain</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <local_coordinate_system>
@@ -99,19 +102,19 @@
             <name>e0</name>
             <type>Constant</type>
             <!--values>-0.9063077870366499 -0.42261826174069944</values-->
-            <!--values>0.42261826174069944 -0.9063077870366499</values-->
-            <values>1 0</values>
+            <values>0.42261826174069944 -0.9063077870366499</values>
+            <!--values>1 0</values-->
         </parameter>
         <parameter>
             <name>e1</name>
             <type>Constant</type>
             <!--values>-0.42261826174069944 0.9063077870366499</values-->
-            <!--values>0.9063077870366499 0.42261826174069944</values-->
-            <values>0 1</values>
+            <values>0.9063077870366499 0.42261826174069944</values>
+            <!--values>0 1</values-->
         </parameter>
         <parameter>
             <mesh>tunnel</mesh>
-            <name>nonequilibrium_stress</name>
+            <name>initial_stress</name>
             <type>Function</type>
             <expression>-5.e6</expression>
             <expression>-5.e6</expression>
@@ -151,12 +154,12 @@
         <parameter>
             <name>ShearModulus12</name>
             <type>Constant</type>
-            <value>7.69e8</value>
+            <value>7.69230769e8</value>
         </parameter>
         <parameter>
             <name>Cohesion</name>
             <type>Constant</type>
-            <value>1.0e6</value>
+            <value>1e6</value>
         </parameter>
         <parameter>
             <name>FrictionAngle</name>
@@ -166,7 +169,7 @@
         <parameter>
             <name>DilatancyAngle</name>
             <type>Constant</type>
-            <value>13.85</value>
+            <value>10</value>
         </parameter>
         <parameter>
             <name>TransitionAngle</name>
@@ -176,12 +179,12 @@
         <parameter>
             <name>TensionCutOffParameter</name>
             <type>Constant</type>
-            <value>1e1</value>
+            <value>2.74e6</value>
         </parameter>
         <parameter>
             <name>NormalFactor</name>
             <type>Constant</type>
-            <value>1.4</value>
+            <value>1.2</value>
         </parameter>
         <parameter>
             <name>ShearFactor</name>
@@ -191,7 +194,7 @@
         <parameter>
             <name>rho_sr</name>
             <type>Constant</type>
-            <value>1</value>
+            <value>2600</value>
         </parameter>
         <parameter>
             <name>displacement0</name>

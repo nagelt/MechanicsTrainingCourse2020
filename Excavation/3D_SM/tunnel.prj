@@ -15,7 +15,7 @@
         <process>
             <name>SD</name>
             <type>SMALL_DEFORMATION</type>
-            <integration_order>4</integration_order>
+            <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
                 <behaviour>MohrCoulombAbboSloanAniso</behaviour>
@@ -51,7 +51,7 @@
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
             <!--Initial Sterss-->
-            <initial_stress>nonequilibrium_stress</initial_stress>
+            <initial_stress>initial_stress</initial_stress>
         </process>
     </processes>
     <time_loop>
@@ -61,7 +61,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-10</abstol>
+                    <abstol>1e-8</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -94,6 +94,7 @@
                 <variable>ElasticStrain</variable>
                 <variable>EquivalentPlasticStrain</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <local_coordinate_system>
@@ -105,21 +106,24 @@
         <parameter><!--65°, so that plane is 25° to horizontal, i.e. a bit shallower than the 31° slope-->
             <name>e0</name>
             <type>Constant</type>
-            <values>0.383022222  0.422618262 -0.821393805</values>
+            <!--values>0.383022222  0.422618262 -0.821393805</values-->
+            <values>0.42261826174069944 -0.9063077870366499 0.0</values>
         </parameter>
         <parameter>
             <name>e1</name>
             <type>Constant</type>
-            <values>-0.178606195 0.906307787 0.383022222</values>
+            <!--values>-0.178606195 0.906307787 0.383022222</values-->
+            <values>0.9063077870366499 0.42261826174069944 0.0</values>
         </parameter>
         <parameter>
             <name>e2</name>
             <type>Constant</type>
-            <values>0.906307787 0.0 0.422618262</values>
+            <!--values>0.906307787 0.0 0.422618262</values-->
+            <values>0.0 0.0 1.0</values>
         </parameter>
         <parameter>
             <mesh>tunnel</mesh>
-            <name>nonequilibrium_stress</name>
+            <name>initial_stress</name>
             <type>Function</type>
             <expression>-5e6</expression>
             <expression>-5e6</expression>
@@ -161,22 +165,22 @@
         <parameter>
             <name>ShearModulus12</name>
             <type>Constant</type>
-            <value>7.69e8</value>
+            <value>7.69230769e8</value>
         </parameter>
         <parameter>
             <name>ShearModulus23</name>
             <type>Constant</type>
-            <value>7.69e8</value>
+            <value>7.69230769e8</value>
         </parameter>
         <parameter>
             <name>ShearModulus13</name>
             <type>Constant</type>
-            <value>7.69e8</value>
+            <value>7.69230769e8</value>
         </parameter>
         <parameter>
             <name>Cohesion</name>
             <type>Constant</type>
-            <value>1.0e6</value>
+            <value>1e6</value>
         </parameter>
         <parameter>
             <name>FrictionAngle</name>
@@ -201,7 +205,7 @@
         <parameter>
             <name>NormalFactor</name>
             <type>Constant</type>
-            <value>1.4</value>
+            <value>1.2</value>
         </parameter>
         <parameter>
             <name>ShearFactor</name>
@@ -211,7 +215,7 @@
         <parameter>
             <name>rho_sr</name>
             <type>Constant</type>
-            <value>1</value>
+            <value>2600</value>
         </parameter>
         <parameter>
             <name>displacement0</name>
@@ -302,7 +306,7 @@
         <nonlinear_solver>
             <name>basic_newton</name>
             <type>Newton</type>
-            <max_iter>5</max_iter>
+            <max_iter>50</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>

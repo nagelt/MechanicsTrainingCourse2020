@@ -15,7 +15,7 @@
         <process>
             <name>RM</name>
             <type>RICHARDS_MECHANICS</type>
-            <integration_order>3</integration_order>
+            <integration_order>2</integration_order>
             <dimension>3</dimension>
             <constitutive_relation>
                 <type>MFront</type>
@@ -83,11 +83,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>2.e8</value>
-                        </property>
-                        <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
                             <value>0.6</value>
@@ -95,7 +90,7 @@
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>1</value>
+                            <value>2600</value>
                         </property>
                         <property>
                             <name>porosity</name>
@@ -288,7 +283,7 @@
         <parameter>
             <name>NormalFactor</name>
             <type>Constant</type>
-            <value>1.4</value>
+            <value>1.2</value>
         </parameter>
         <parameter>
             <name>ShearFactor</name>
@@ -297,11 +292,6 @@
         </parameter>
         <!-- Model parameters -->
         <parameter>
-            <name>mu</name>
-            <type>Constant</type>
-            <value>1e-3</value>
-        </parameter>
-        <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0 0</values>
@@ -309,7 +299,7 @@
         <parameter>
             <name>dirichlet0</name>
             <type>Constant</type>
-            <values>0</values>
+            <value>0</value>
         </parameter>
         <parameter>
             <name>pressure_ic</name>
