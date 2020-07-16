@@ -54,6 +54,7 @@
             <specific_body_force>0 0 0</specific_body_force>
             <!--Initial Sterss-->
             <initial_stress>Initial_stress</initial_stress>
+            <mass_lumping>true</mass_lumping>
         </process>
     </processes>
     <media>
@@ -65,7 +66,7 @@
                         <property>
                             <name>bulk_modulus</name>
                             <type>Constant</type>
-                            <value>2.e9</value>
+                            <value>2.e8</value>
                         </property>
                         <property>
                             <name>viscosity</name>
