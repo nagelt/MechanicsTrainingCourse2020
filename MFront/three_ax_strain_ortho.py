@@ -1,4 +1,5 @@
 import mtest
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -21,11 +22,13 @@ m.setMaterialProperty('PoissonRatio13', 0.18)
 m.setMaterialProperty('ShearModulus12', 60e3)
 m.setMaterialProperty('ShearModulus23', 30e3)
 m.setMaterialProperty('ShearModulus13', 180e3)
+
 s = mtest.MTestCurrentState()
 wk = mtest.MTestWorkSpace()
 m.completeInitialisation()
 m.initializeCurrentState(s)
 m.initializeWorkSpace(wk)
+
 ltime = np.linspace(0,tmax,100)
 
 exx = np.array([0.])
@@ -57,6 +60,7 @@ ax[1].plot(exx*100,sxx,label='$\\epsilon_{xx}-\\sigma{xx}$')
 ax[1].plot(eyy*100,syy,label='$\\epsilon_{yy}-\\sigma{yy}$')
 ax[1].plot(ezz*100,szz,label='$\\epsilon_{zz}-\\sigma{zz}$')
 ax[1].set_xlabel('$\\epsilon$ / %')
+ax[1].set_ylabel('$\\sigma$ / MPa')
 ax[1].legend()
 
 fig.tight_layout()
