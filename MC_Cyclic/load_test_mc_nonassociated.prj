@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="true">model_bias.vtu</mesh>
@@ -127,7 +127,7 @@
         <parameter>
             <name>DilatancyAngle</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>10</value>
         </parameter>
         <parameter>
             <name>TransitionAngle</name>
