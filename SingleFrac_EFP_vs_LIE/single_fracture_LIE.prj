@@ -149,7 +149,7 @@
         <parameter>
             <name>S_f</name>
             <type>Constant</type>
-            <value>1.00e-12</value>
+            <value>1.00e-10</value>
         </parameter>
         <parameter>
             <name>biot_f</name>

@@ -158,7 +158,7 @@
                         <property>
                             <name>porosity</name>
                             <type>Constant</type>
-                            <value>1e-05</value>
+                            <value>0.001</value>
                         </property>
                         <property>
                             <name>biot_coefficient</name>
