@@ -36,11 +36,11 @@
                     <norm_type>NORM2</norm_type>
                     <reltols>1e-8 1e-8 1e-8</reltols>
                 </convergence_criterion>
-				<!-- <compensate_non_equilibrium_initial_residuum>true</compensate_non_equilibrium_initial_residuum> -->
+                <!-- <compensate_non_equilibrium_initial_residuum>true</compensate_non_equilibrium_initial_residuum> -->
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-				<time_stepping> 
+                <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
                     <t_end>2000</t_end>
@@ -99,20 +99,20 @@
                             <type>Constant</type>
                             <value>2716.0</value>
                         </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.001</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+				<property>
+					<name>porosity</name>
+					<type>Constant</type>
+					<value>0.001</value>
+				</property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>
@@ -143,7 +143,7 @@
                                 <reference_condition>0</reference_condition>
                                 <slope>1e-07</slope>
                             </independent_variable>
-							<reference_value>1000.0</reference_value>
+                            <reference_value>1000.0</reference_value>
                         </property>
                     </properties>
                 </phase>
@@ -155,20 +155,20 @@
                             <type>Constant</type>
                             <value>2716.0</value>
                         </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.001</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+		        <property>
+		            <name>porosity</name>
+		            <type>Constant</type>
+		            <value>0.001</value>
+		        </property>
+		        <property>
+		            <name>biot_coefficient</name>
+		            <type>Constant</type>
+		            <value>1</value>
+		        </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>
@@ -187,20 +187,20 @@
         </medium>
     </media>
     <parameters>
-    <!-- Elastic parameters -->
+        <!-- Elastic parameters -->
         <parameter>
             <name>E</name>
             <type>Group</type>
             <group_id_property>MaterialIDs</group_id_property>
-			<index_values>
-				<index>0</index>
-				<value>60e9</value>
-			</index_values>
-			<index_values>
-				<index>1</index>
-				<value>9.98e7</value>
-			</index_values>
-		</parameter>
+            <index_values>
+                <index>0</index>
+                <value>60e9</value>
+            </index_values>
+            <index_values>
+                <index>1</index>
+                <value>9.98e7</value>
+            </index_values>
+        </parameter>
         <parameter>
             <name>nu</name>
             <type>Constant</type>
@@ -212,19 +212,18 @@
             <type>Constant</type>
             <value>0.00e+00</value>
         </parameter>
-          <!-- Mass Bondary Parameters -->
+        <!-- Mass Bondary Parameters -->
         <parameter>
             <name>q_in</name>
             <type>CurveScaled</type>
-			<curve>curve_q_in</curve>
-			<parameter>q_in_start</parameter>
+            <curve>curve_q_in</curve>
+            <parameter>q_in_start</parameter>
         </parameter>
         <parameter>
             <name>q_in_start</name>
             <type>Constant</type>
             <value>1</value>
         </parameter>
-
         <!-- Mechancis properties -->
         <parameter>
             <name>displacement0</name>
@@ -247,24 +246,24 @@
             <value>0.00e+00</value>
         </parameter>
     </parameters>
-	<curves>
-    <!-- Mass flow curve -->
+    <curves>
+        <!-- Mass flow curve -->
         <curve>
             <name>curve_q_in</name>
-            <coords>1 1000 1001 2000</coords> 
+            <coords>1 1000 1001 2000</coords>
             <values>3.00e-02 3.00e-02 -3.00e-02 -3.00e-02</values>
         </curve>
-    <!-- Pressure curve -->
-		<curve>
-			<name>curve_p_in</name>
-			<coords>
+        <!-- Pressure curve -->
+        <curve>
+            <name>curve_p_in</name>
+            <coords>
 			1	1000		1005 	2000
-			</coords> 
-			<values>
+			</coords>
+            <values>
 			0.9e6	0.9e6  -0.9e6    -0.9e6
 			</values>
-		</curve>
-	</curves>
+        </curve>
+    </curves>
     <process_variables>
         <process_variable>
             <name>pressure</name>
@@ -272,7 +271,7 @@
             <order>1</order>
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
-            <!-- Mass Flow BC -->
+                <!-- Mass Flow BC -->
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>Frac_in</geometry>
@@ -280,7 +279,7 @@
                     <component>0</component>
                     <parameter>q_in</parameter>
                 </boundary_condition>
-            <!-- Pressure BC -->
+                <!-- Pressure BC -->
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>Frac_out</geometry>
@@ -340,7 +339,7 @@
             <name>general_linear_solver</name>
             <lis>-i SparseLU -p diagonal -tol 1e-12 -maxiter 50000</lis>
             <eigen>
-                <solver_type>SparseLU</solver_type>
+                <solver_type>PardisoLU</solver_type>
                 <precon_type>DIAGONAL</precon_type>
                 <max_iteration_step>50000</max_iteration_step>
                 <error_tolerance>1e-12</error_tolerance>
