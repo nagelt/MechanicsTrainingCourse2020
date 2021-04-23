@@ -61,7 +61,7 @@
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
-                <type>FixedTimeStepping</type>
+                    <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
                     <t_end>2000</t_end>
                     <timesteps>
@@ -114,8 +114,8 @@
             <type>Constant</type>
             <value>0.001</value>
         </parameter>
-			<!-- Permeability -->
-		<parameter>
+        <!-- Permeability -->
+        <parameter>
             <name>k</name>
             <type>Constant</type>
             <value>1e-21</value>
@@ -176,8 +176,8 @@
         <parameter>
             <name>q_in</name>
             <type>CurveScaled</type>
-			<curve>curve_q_in</curve>
-			<parameter>q_in_start</parameter>
+            <curve>curve_q_in</curve>
+            <parameter>q_in_start</parameter>
         </parameter>
         <parameter>
             <name>q_in_start</name>
@@ -185,7 +185,7 @@
             <value>1</value>
         </parameter>
         <parameter>
-            <name>area_parameter</name>  
+            <name>area_parameter</name>
             <type>Constant</type>
             <value>1</value>
         </parameter>
@@ -218,12 +218,12 @@
     </parameters>
     <curves>
         <!-- Mass flow curve -->
-            <curve>
-                <name>curve_q_in</name>
-                <coords>1 1000 1001 2000</coords> 
-                <values>3.00e-08 3.00e-08 -3.00e-08 -3.00e-08</values>
-            </curve>
-	</curves>
+        <curve>
+            <name>curve_q_in</name>
+            <coords>1 1000 1001 2000</coords>
+            <values>3.00e-08 3.00e-08 -3.00e-08 -3.00e-08</values>
+        </curve>
+    </curves>
     <process_variables>
         <process_variable>
             <name>pressure</name>
@@ -239,7 +239,7 @@
                     <component>0</component>
                     <parameter>p0</parameter>
                 </boundary_condition>
-            <!-- Mass Flow BC -->
+                <!-- Mass Flow BC -->
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>POINT4</geometry>
