@@ -48,7 +48,7 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-		    <time_stepping>
+                <time_stepping>
                     <type>IterationNumberBasedTimeStepping</type>
                     <t_initial>0.0</t_initial>
                     <t_end>40.0</t_end>
