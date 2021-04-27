@@ -99,20 +99,20 @@
                             <type>Constant</type>
                             <value>2716.0</value>
                         </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.001</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.001</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>
@@ -155,20 +155,20 @@
                             <type>Constant</type>
                             <value>2716.0</value>
                         </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.001</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.001</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>
