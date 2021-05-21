@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+	<mesh>material-domain-revise2.vtu</mesh>
+
+	
+    <geometry>material-domain.gml</geometry>
+
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+			
+			
+			
+			
+			<constitutive_relation id="0">
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E0</youngs_modulus>
+                <poissons_ratio>nu</poissons_ratio>
+            </constitutive_relation>
+            <constitutive_relation id="1">
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E1</youngs_modulus>
+                <poissons_ratio>nu</poissons_ratio>
+            </constitutive_relation>
+            <constitutive_relation id="2">
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E2</youngs_modulus>
+                <poissons_ratio>nu</poissons_ratio>
+            </constitutive_relation>
+
+			
+			
+			
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 -9.81</specific_body_force>
+            <!-- <specific_body_force>0 0</specific_body_force> -->
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+				<secondary_variable internal_name="epsilon" output_name="epsilon"/>
+            </secondary_variables>
+			<initial_stress>nonequilibrium_stress</initial_stress>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+				<compensate_non_equilibrium_initial_residuum>true</compensate_non_equilibrium_initial_residuum>   <!-- !!! Nicht vergessen bei Initialspannung!!! -->
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1e-12</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <!-- <time_stepping> -->
+                    <!-- <type>EvolutionaryPIDcontroller</type> -->
+                    <!-- <t_initial> 0 </t_initial> -->
+                    <!-- <t_end> 10 </t_end> -->
+                    <!-- <dt_guess> 0.01 </dt_guess> -->
+                    <!-- <dt_min> 1e-5 </dt_min> -->
+                    <!-- <dt_max> 1 </dt_max> -->
+                    <!-- <rel_dt_min> 0.001 </rel_dt_min> -->
+                    <!-- <rel_dt_max> 1.2 </rel_dt_max> -->
+                    <!-- <tol> 1 </tol> -->
+                <!-- </time_stepping> -->
+				
+				
+				<time_stepping>
+                    <type>IterationNumberBasedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>1.0</t_end>
+                    <initial_dt>1.0</initial_dt>
+                    <minimum_dt>0.1</minimum_dt>
+                    <maximum_dt>1.0</maximum_dt>
+                    <number_iterations>1   7  11 15</number_iterations>
+                    <multiplier>       1.2 1.1 0.9 0.5</multiplier>
+                </time_stepping>
+            </process>
+			
+			
+		
+			
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>material-domain_geometry_pcs_{:process_id}</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>1000</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+				<variable>epsilon</variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+        </output>
+    </time_loop>
+    <parameters>
+	
+		<parameter>
+            <mesh>material-domain-revise2</mesh>
+            <name>nonequilibrium_stress</name>
+            <type>Function</type>
+            <expression>1800*9.81*(y-50)</expression>
+            <expression>1800*9.81*(y-50)*0.3/(1-0.3)</expression>
+            <expression>0</expression>
+            <expression>0</expression>
+        </parameter>
+	
+	
+        <parameter>
+            <name>E0</name>
+            <type>Constant</type>
+            <value>100e6</value>
+        </parameter>
+		<parameter>
+            <name>E1</name>
+            <type>Constant</type>
+            <value>5e6</value>
+        </parameter>
+		<parameter>
+            <name>E2</name>
+            <type>Constant</type>
+            <value>30e9</value>
+        </parameter>
+        <parameter>
+            <name>nu</name>
+            <type>Constant</type>
+            <value>.3</value>
+        </parameter>
+
+		
+		
+		
+
+		
+		
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>dirichlet0</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>dirichlet1</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+		
+     <parameter>
+       <name>disp_top</name>
+       <type>Constant</type>
+       <value>-0.42</value>
+     </parameter>
+     <parameter>
+       <name>disp_top_transient</name>
+       <type>CurveScaled</type>
+       <curve>timeRamp_p_in</curve>
+       <parameter>disp_top</parameter>
+     </parameter>
+		
+     <parameter>
+       <name>p_inTop</name>
+       <type>Constant</type>
+       <value>-1e6</value>
+     </parameter>
+     <parameter>
+       <name>p_in_transient</name>
+       <type>CurveScaled</type>
+       <curve>timeRamp_p_in</curve>
+       <parameter>p_inTop</parameter>
+     </parameter>
+	 
+	 
+	 
+	 
+	 <parameter>
+       <name>rho_in</name>
+       <type>Constant</type>
+       <value>1800</value>
+     </parameter>
+     <parameter>
+       <name>rho_sr</name>
+       <type>CurveScaled</type>
+       <curve>timeRamp_rho</curve>
+       <parameter>rho_in</parameter>
+     </parameter>
+	 
+	 
+    </parameters>
+	
+	
+	
+	
+	
+	<curves>
+     <curve>
+       <name>timeRamp_p_in</name>
+					  <coords>
+			       	0
+					1
+					10
+		       </coords>
+		       <values>
+			       	0
+					1
+					1
+		       	</values>
+     </curve>
+	<curve>
+       <name>timeRamp_rho</name>
+					  <coords>
+			       	0
+					1
+					10
+		       </coords>
+		       <values>
+			       	1
+					1
+					1
+		       	</values>
+     </curve>
+   </curves>
+	
+	
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>material-domain_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+				<boundary_condition>
+                    <geometrical_set>material-domain_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>material-domain_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>dirichlet1</parameter>
+                </boundary_condition>
+				
+				<!-- <boundary_condition> -->
+                    <!-- <geometrical_set>material-domain_geometry</geometrical_set> -->
+                    <!-- <geometry>bottom</geometry> -->
+                    <!-- <type>Dirichlet</type> -->
+                    <!-- <component>0</component> -->
+                    <!-- <parameter>dirichlet1</parameter> -->
+                <!-- </boundary_condition> -->
+				
+				
+                <boundary_condition>
+                    <geometrical_set>material-domain_geometry</geometrical_set>
+                    <geometry>last</geometry>
+                    <type>Neumann</type>
+                    <component>1</component>
+                    <parameter>p_in_transient</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>30</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <!-- <linear_solvers> -->
+        <!-- <linear_solver> -->
+            <!-- <name>general_linear_solver</name> -->
+            <!-- <lis>-i cg -p jacobi -tol 1e-16 -maxiter 10000</lis> -->
+            <!-- <eigen> -->
+                <!-- <solver_type>CG</solver_type> -->
+                <!-- <precon_type>DIAGONAL</precon_type> -->
+                <!-- <max_iteration_step>10000</max_iteration_step> -->
+                <!-- <error_tolerance>1e-16</error_tolerance> -->
+            <!-- </eigen> -->
+            <!-- <petsc> -->
+                <!-- <prefix>sd</prefix> -->
+                <!-- <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters> -->
+            <!-- </petsc> -->
+        <!-- </linear_solver> -->
+    <!-- </linear_solvers> -->
+	
+	
+	
+	<linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+                <!--
+                <solver_type>PardisoLU</solver_type>
+                -->
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+	
+	
+    <test_definition>
+        <vtkdiff>
+            <file>material-domain_geometry_pcs_0_ts_4_t_1.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
