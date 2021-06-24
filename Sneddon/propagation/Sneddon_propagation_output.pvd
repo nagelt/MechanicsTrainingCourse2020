@@ -7,19 +7,19 @@
     <DataSet timestep="0.00316920291504381" group="" part="0" file="Sneddon_propagation_output_ts_3_t_0.003169.vtu"/>
     <DataSet timestep="0.00456620692766097" group="" part="0" file="Sneddon_propagation_output_ts_4_t_0.004566.vtu"/>
     <DataSet timestep="0.00624261174280156" group="" part="0" file="Sneddon_propagation_output_ts_5_t_0.006243.vtu"/>
-    <DataSet timestep="0.00825429752097026" group="" part="0" file="Sneddon_propagation_output_ts_6_t_0.008254.vtu"/>
+    <DataSet timestep="0.00825429752097027" group="" part="0" file="Sneddon_propagation_output_ts_6_t_0.008254.vtu"/>
     <DataSet timestep="0.0106683204547727" group="" part="0" file="Sneddon_propagation_output_ts_7_t_0.010668.vtu"/>
     <DataSet timestep="0.0135651479753357" group="" part="0" file="Sneddon_propagation_output_ts_8_t_0.013565.vtu"/>
     <DataSet timestep="0.0170413410000112" group="" part="0" file="Sneddon_propagation_output_ts_9_t_0.017041.vtu"/>
     <DataSet timestep="0.0212127726296218" group="" part="0" file="Sneddon_propagation_output_ts_10_t_0.021213.vtu"/>
     <DataSet timestep="0.0262184905851546" group="" part="0" file="Sneddon_propagation_output_ts_11_t_0.026218.vtu"/>
     <DataSet timestep="0.0322253521317939" group="" part="0" file="Sneddon_propagation_output_ts_12_t_0.032225.vtu"/>
-    <DataSet timestep="0.039433585987761" group="" part="0" file="Sneddon_propagation_output_ts_13_t_0.039434.vtu"/>
-    <DataSet timestep="0.0480834666149216" group="" part="0" file="Sneddon_propagation_output_ts_14_t_0.048083.vtu"/>
-    <DataSet timestep="0.0580834666149216" group="" part="0" file="Sneddon_propagation_output_ts_15_t_0.058083.vtu"/>
+    <DataSet timestep="0.0394335859877611" group="" part="0" file="Sneddon_propagation_output_ts_13_t_0.039434.vtu"/>
+    <DataSet timestep="0.0480834666149217" group="" part="0" file="Sneddon_propagation_output_ts_14_t_0.048083.vtu"/>
+    <DataSet timestep="0.0580834666149217" group="" part="0" file="Sneddon_propagation_output_ts_15_t_0.058083.vtu"/>
     <DataSet timestep="0.0680834666149217" group="" part="0" file="Sneddon_propagation_output_ts_16_t_0.068083.vtu"/>
-    <DataSet timestep="0.0780834666149216" group="" part="0" file="Sneddon_propagation_output_ts_17_t_0.078083.vtu"/>
-    <DataSet timestep="0.0880834666149216" group="" part="0" file="Sneddon_propagation_output_ts_18_t_0.088083.vtu"/>
+    <DataSet timestep="0.0780834666149217" group="" part="0" file="Sneddon_propagation_output_ts_17_t_0.078083.vtu"/>
+    <DataSet timestep="0.0880834666149217" group="" part="0" file="Sneddon_propagation_output_ts_18_t_0.088083.vtu"/>
     <DataSet timestep="0.0980834666149216" group="" part="0" file="Sneddon_propagation_output_ts_19_t_0.098083.vtu"/>
     <DataSet timestep="0.108083466614922" group="" part="0" file="Sneddon_propagation_output_ts_20_t_0.108083.vtu"/>
     <DataSet timestep="0.118083466614922" group="" part="0" file="Sneddon_propagation_output_ts_21_t_0.118083.vtu"/>
@@ -253,8 +253,8 @@
     <DataSet timestep="2.07808346661492" group="" part="0" file="Sneddon_propagation_output_ts_249_t_2.078083.vtu"/>
     <DataSet timestep="2.08808346661492" group="" part="0" file="Sneddon_propagation_output_ts_250_t_2.088083.vtu"/>
     <DataSet timestep="2.09808346661492" group="" part="0" file="Sneddon_propagation_output_ts_251_t_2.098083.vtu"/>
-    <DataSet timestep="2.10308346661491" group="" part="0" file="Sneddon_propagation_output_ts_252_t_2.103083.vtu"/>
-    <DataSet timestep="2.11308346661491" group="" part="0" file="Sneddon_propagation_output_ts_253_t_2.113083.vtu"/>
+    <DataSet timestep="2.10308346661492" group="" part="0" file="Sneddon_propagation_output_ts_252_t_2.103083.vtu"/>
+    <DataSet timestep="2.11308346661492" group="" part="0" file="Sneddon_propagation_output_ts_253_t_2.113083.vtu"/>
     <DataSet timestep="2.12308346661491" group="" part="0" file="Sneddon_propagation_output_ts_254_t_2.123083.vtu"/>
     <DataSet timestep="2.13308346661491" group="" part="0" file="Sneddon_propagation_output_ts_255_t_2.133083.vtu"/>
     <DataSet timestep="2.13808346661491" group="" part="0" file="Sneddon_propagation_output_ts_256_t_2.138083.vtu"/>
