@@ -65,9 +65,7 @@ Ru.setEntryName("UniversalGasConstant");
 	if (norm_s > 1e-14 * mu)
 	{
 	    depsPL = dt * sqrt3o2 * A1 * expPL*std::pow(seq/sig0,m) * s/norm_s;
-	    depsL = dt * sqrt3o2 * A2 * Dgrain * expL*(seq/sig0) * s/norm_s;
-	    if (Dgrain > 5e-2)
-		    std::cout << Dgrain << std::endl;
+	    depsL = dt * sqrt3o2 * A2/std::pow(Dgrain,3) * expL*(seq/sig0) * s/norm_s;
 	}
 	else
 	{
