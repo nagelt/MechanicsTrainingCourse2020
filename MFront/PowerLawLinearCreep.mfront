@@ -56,16 +56,17 @@ Ru.setEntryName("UniversalGasConstant");
 {
     const auto seq = sigmaeq(sig);
     const auto s = deviator(sig);
-    const auto norm_s = std::sqrt(s | s);
     const auto sqrt3o2 = std::sqrt(3./2.);
-    const auto expPL = std::exp(-Q1/Ru/T);
-    const auto expL = std::exp(-Q2/Ru/T);
+    const auto norm_s = seq / sqrt3o2;
     const auto nulltensor = Stensor::Id() * 0.;
+    
+    const auto bPL = std::pow(3./2.,(m+1)/2) * A1 * std::exp(-Q1/Ru/T) / std::pow(sig0,m);
+    const auto bL = 3./2. * A2/std::pow(Dgrain,3) * std::exp(-Q2/Ru/T) / sig0;
 
 	if (norm_s > 1e-14 * mu)
 	{
-	    depsPL = dt * sqrt3o2 * A1 * expPL*std::pow(seq/sig0,m) * s/norm_s;
-	    depsL = dt * sqrt3o2 * A2/std::pow(Dgrain,3) * expL*(seq/sig0) * s/norm_s;
+	    depsPL = dt * bPL * std::pow(norm_s,m-1) * s;
+	    depsL = dt * bL * s;
 	}
 	else
 	{
