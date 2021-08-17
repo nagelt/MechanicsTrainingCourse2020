@@ -1,0 +1,81 @@
+
+@DSL Implicit;
+@Behaviour PowerLawLinearCreep;
+@Author Thomas Nagel;
+@Description
+{Combined power-law (dislocation creep) and linear (pressure-solution creep)
+model for salt creep. Bérest et al. (2019). Rock Mech Rock Eng.
+};
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@PerturbationValueForNumericalJacobianComputation 1.e-7;
+@MaximumNumberOfIterations 100;
+
+@Epsilon 1.e-14;
+@Theta 1.0;
+
+@ModellingHypotheses{".+"};
+@Brick StandardElasticity;
+
+// Intercept of yield function
+@MaterialProperty real A1;
+A1.setEntryName("PowerLawFactor");
+@MaterialProperty real Q1;
+Q1.setEntryName("PowerLawEnergy");
+@MaterialProperty real m;
+m.setEntryName("PowerLawExponent");
+@MaterialProperty real A2;
+A2.setEntryName("LinearLawFactor");
+@MaterialProperty real Q2;
+Q2.setEntryName("LinearLawEnergy");
+@MaterialProperty real sig0;
+sig0.setEntryName("ReferenceStress");
+@MaterialProperty real Dgrain;
+Dgrain.setEntryName("SaltGrainSize");
+
+@Parameter real Ru = 8.314472; //J/(Kmol)
+Ru.setEntryName("UniversalGasConstant");
+
+//! increment of the power-law strain
+@LocalVariable Stensor depsPL;
+//! increment of the linear-law strain
+@LocalVariable Stensor depsL;
+
+//! Second Lamé coefficient
+@LocalVariable stress mu;
+
+
+@InitLocalVariables
+{
+    mu = computeMu(young, nu);
+    // Compute initial elastic strain
+    eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
+}
+
+@Integrator
+{
+    const auto seq = sigmaeq(sig);
+    const auto s = deviator(sig);
+    const auto norm_s = std::sqrt(s | s);
+    const auto sqrt3o2 = std::sqrt(3./2.);
+    const auto expPL = std::exp(-Q1/Ru/T);
+    const auto expL = std::exp(-Q2/Ru/T);
+    const auto nulltensor = Stensor::Id() * 0.;
+
+	if (norm_s > 1e-14 * mu)
+	{
+	    depsPL = dt * sqrt3o2 * A1 * expPL*std::pow(seq/sig0,m) * s/norm_s;
+	    depsL = dt * sqrt3o2 * A2 * Dgrain * expL*(seq/sig0) * s/norm_s;
+	    if (Dgrain > 5e-2)
+		    std::cout << Dgrain << std::endl;
+	}
+	else
+	{
+		depsPL = nulltensor;
+		depsL = nulltensor;
+	}
+
+    // residuals
+    feel += depsPL + depsL;
+
+}
