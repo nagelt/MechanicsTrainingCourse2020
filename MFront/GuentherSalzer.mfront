@@ -103,9 +103,8 @@ Ru.setEntryName("UniversalGasConstant");
     deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E) * s / norm_s);
     dfeel_ddepsCrV = std::sqrt(3. / 2.) / norm_s * s;
     dfeel_ddeel +=
-        2. * mu * std::sqrt(3. / 2.) / norm_s *
-        ((depsCrV + deps_cr_E) * (Pdev - (s ^ s) / norm_s / norm_s) +
-         (dfepsCrV_dseq + db_dseq * dt * 3. / (2. * seq)) * (s ^ s));
+        2. * mu * std::sqrt(3. / 2.) / norm_s * (
+        (depsCrV + deps_cr_E) * (Pdev - (s ^ s) / norm_s / norm_s) + db_dseq * dt * 3. / (2.*seq) * (s^s));
   } else {
     fepsCrV = depsCrV - deps_cr_E;
     dfepsCrV_ddepsCrV = 1.;
