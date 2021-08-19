@@ -16,9 +16,9 @@ and Modelling. Rock Mechanics and Rock Engineering,
 
 @Algorithm NewtonRaphson; //_NumericalJacobian;
 @MaximumNumberOfIterations 10;
-@CompareToNumericalJacobian true;
-@PerturbationValueForNumericalJacobianComputation 1e-8;
-@JacobianComparisonCriterion 1.e-6;
+//@CompareToNumericalJacobian true;
+//@PerturbationValueForNumericalJacobianComputation 1e-8;
+//@JacobianComparisonCriterion 1.e-6;
 //@NumericallyComputedJacobianBlocks{dfeel_ddeel};
 
 @Epsilon 1.e-14;
