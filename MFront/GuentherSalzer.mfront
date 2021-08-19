@@ -19,7 +19,7 @@ and Modelling. Rock Mechanics and Rock Engineering,
 @CompareToNumericalJacobian true;
 @PerturbationValueForNumericalJacobianComputation 1e-8;
 @JacobianComparisonCriterion 1.e-6;
-@NumericallyComputedJacobianBlocks{dfeel_ddeel};
+//@NumericallyComputedJacobianBlocks{dfeel_ddeel};
 
 @Epsilon 1.e-14;
 @Theta 1.0;
@@ -102,10 +102,10 @@ Ru.setEntryName("UniversalGasConstant");
     dfepsCrV_ddeel = dfepsCrV_dseq * 3. * s / (2. * seq) * 2. * mu;
     deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E) * s / norm_s);
     dfeel_ddepsCrV = std::sqrt(3. / 2.) / norm_s * s;
-    // dfeel_ddeel +=
-    //    2. * mu * std::sqrt(3. / 2.) / norm_s *
-    //    ((depsCrV + deps_cr_E) * (Pdev + (s ^ s)) +
-    //     (dfepsCrV_dseq + db_dseq * dt * 3. / (2. * seq)) * (s ^ s));
+    dfeel_ddeel +=
+        2. * mu * std::sqrt(3. / 2.) / norm_s *
+        ((depsCrV + deps_cr_E) * (Pdev - (s ^ s) / norm_s / norm_s) +
+         (dfepsCrV_dseq + db_dseq * dt * 3. / (2. * seq)) * (s ^ s));
   } else {
     fepsCrV = depsCrV - deps_cr_E;
     dfepsCrV_ddepsCrV = 1.;
