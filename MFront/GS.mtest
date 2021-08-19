@@ -1,0 +1,29 @@
+@Author TN;
+@Date   01/04/2020;
+@Description{
+
+};
+@Behaviour<generic> 'src/libBehaviour.so' 'GuentherSalzer';
+@MaximumNumberOfSubSteps 1;
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStress<function> 'SXX' '0.0';
+@ImposedStress<function> 'SYY' '0.0';
+@ImposedStress<function> 'SXY' '0.0';
+@ImposedStress<function> 'SXZ' '0.0';
+@ImposedStress<function> 'SYZ' '0.0';
+@ImposedStress 'SZZ' {0: 0, 1:16, 60:16, 61:25, 200:25};
+@Times {0.,200 in 200};
+
+@MaterialProperty<constant> 'YoungModulus' 25e3; 
+@MaterialProperty<constant> 'PoissonRatio' 0.27; 
+@MaterialProperty<constant> 'PrimaryPowerLawFactor' 6.5e-24;
+@MaterialProperty<constant> 'PrimaryPowerLawExponent' 11.;
+@MaterialProperty<constant> 'SecondaryPowerLawFactor1' 0.05;
+@MaterialProperty<constant> 'SecondaryPowerLawExponent1' 2.7;
+@MaterialProperty<constant> 'SecondaryActivationEnergy1' 40e3;
+@MaterialProperty<constant> 'SecondaryPowerLawFactor2' 0.02;
+@MaterialProperty<constant> 'SecondaryPowerLawExponent2' 6.8;
+@MaterialProperty<constant> 'SecondaryActivationEnergy2' 65.e3;
+@MaterialProperty<constant> 'HardeningExponent' 2.95;
+@MaterialProperty<constant> 'InitialHardening' 0.01;
+@MaterialProperty<constant> 'ReferenceStress' 1.;
