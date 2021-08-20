@@ -122,8 +122,15 @@ Udil.setEntryName("DilatancyWork");
 
 @UpdateAuxiliaryStateVariables
 {
+//http://tfel.sourceforge.net/tensors.html#eigenvalues-eigenvectors-and-eigentensors-of-symmetric-tensors
 	const auto seq = sigmaeq(deviator(sig));
-	const auto seq_Dil = 0.;
-	Udil += (seq - seq_Dil) * (depsCrV + deps_cr_E);
+	const auto sig_p = sig.computeEigenValues(Stensor::DESCENDING);
+	const auto D1 = 8.;
+	const auto D2 = 0.25;
+	const auto D3 = 4.8;
+	const auto s3 = -sig_p(0); //sign change for compression convention
+	const auto seq_Dil = s3*(D1/(D2+s3)+D3);
+	if (seq - seq_Dil > 0.)
+		Udil += (seq - seq_Dil) * (depsCrV + deps_cr_E);
 }
 
