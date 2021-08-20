@@ -14,12 +14,8 @@ and Modelling. Rock Mechanics and Rock Engineering,
 48(6), 2603–2613. https://doi.org/10.1007/s00603-015-0839-2
 };
 
-@Algorithm NewtonRaphson; //_NumericalJacobian;
-@MaximumNumberOfIterations 10;
-//@CompareToNumericalJacobian true;
-//@PerturbationValueForNumericalJacobianComputation 1e-8;
-//@JacobianComparisonCriterion 1.e-6;
-//@NumericallyComputedJacobianBlocks{dfeel_ddeel};
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 100;
 
 @Epsilon 1.e-14;
 @Theta 1.0;
