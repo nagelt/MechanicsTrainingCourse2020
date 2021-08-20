@@ -1,9 +1,11 @@
 
 @DSL Implicit;
-@Behaviour GuentherSalzer;
+@Behaviour GuentherSalzerDilatancy_semi_expl;
 @Author Thomas Nagel;
 @Description {
 Günther Salzer model for rock salt.
+Semi-explicit treatment of damage/dilatancy.
+
 Günther, R., & Salzer, K. (2012). Advanced strain-hardening approach.
 In Mechanical Behaviour of Salt VII (Issue December 2016). 
 CRC Press. https://doi.org/10.1201/b12041-4
@@ -53,10 +55,16 @@ Ru.setEntryName("UniversalGasConstant");
 //Hardening strain
 @StateVariable real epsCrV;
 
+@AuxiliaryStateVariable stress Udil;
+Udil.setEntryName("DilatancyWork");
+
 //Recovery strain increment
 @LocalVariable real deps_cr_E;
 //Creep strain increment
 @LocalVariable Stensor deps_cr;
+//Dilatancy volume strain increment
+@LocalVariable real deps_vol;
+
 
 //! Second Lamé coefficient
 @LocalVariable stress mu;
@@ -73,6 +81,7 @@ Ru.setEntryName("UniversalGasConstant");
   const auto norm_s = seq / std::sqrt(3. / 2.);
   const auto nulltensor = Stensor::Id() * 0.;
   constexpr auto Pdev = Stensor4::K();
+  
 
   // secondary (recovery)
   const auto b = As1 * std::exp(-Q1 / (Ru * T)) * std::pow(seq / sig0, ns1) +
@@ -110,3 +119,11 @@ Ru.setEntryName("UniversalGasConstant");
   // residuals
   feel += deps_cr;
 }
+
+@UpdateAuxiliaryStateVariables
+{
+	const auto seq = sigmaeq(deviator(sig));
+	const auto seq_Dil = 0.;
+	Udil += (seq - seq_Dil) * (depsCrV + deps_cr_E);
+}
+
