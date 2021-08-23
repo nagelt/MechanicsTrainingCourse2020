@@ -52,6 +52,7 @@ Ru.setEntryName("UniversalGasConstant");
 
 //Hardening strain
 @StateVariable real epsCrV;
+epsCrV.setEntryName("HardeningStrain");
 
 //Recovery strain increment
 @LocalVariable real deps_cr_E;

@@ -1,0 +1,29 @@
+@Author TN;
+@Date   01/04/2020;
+@Description{
+
+};
+@Behaviour<generic> './src/libBehaviour.so' 'GuentherSalzerDilatancy_semi_expl';
+@MaximumNumberOfSubSteps 10;
+@ExternalStateVariable 'Temperature' 299.;
+@ImposedStress 'SXX' '-3.0';
+@ImposedStress 'SYY' '-3.0';
+@ImposedStress 'SXY' '0.0';
+@ImposedStress 'SXZ' '0.0';
+@ImposedStress 'SYZ' '0.0';
+@ImposedStrain 'EZZ' {0: 0, 30:-0.3};
+@Times {0.,30 in 1000};
+
+@MaterialProperty<constant> 'YoungModulus' 25.e4; 
+@MaterialProperty<constant> 'PoissonRatio' 0.27; 
+@MaterialProperty<constant> 'PrimaryPowerLawFactor' 6.5e-24;
+@MaterialProperty<constant> 'PrimaryPowerLawExponent' 11.;
+@MaterialProperty<constant> 'SecondaryPowerLawFactor1' 0.005;
+@MaterialProperty<constant> 'SecondaryPowerLawExponent1' 4.0;
+@MaterialProperty<constant> 'SecondaryActivationEnergy1' 40.e3;
+@MaterialProperty<constant> 'SecondaryPowerLawFactor2' 0.005;
+@MaterialProperty<constant> 'SecondaryPowerLawExponent2' 1.0;
+@MaterialProperty<constant> 'SecondaryActivationEnergy2' 65.e3;
+@MaterialProperty<constant> 'HardeningExponent' 2.95;
+@MaterialProperty<constant> 'InitialHardening' 0.001;
+@MaterialProperty<constant> 'ReferenceStress' 1.;
