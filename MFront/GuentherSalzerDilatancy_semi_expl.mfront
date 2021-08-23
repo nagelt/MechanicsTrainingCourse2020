@@ -52,11 +52,31 @@ sig0.setEntryName("ReferenceStress");
 @Parameter real Ru = 8.314472; // J/(Kmol)
 Ru.setEntryName("UniversalGasConstant");
 
+
+@Parameter real D1 = 8.;
+@Parameter real D2 = 0.25;
+@Parameter real D3 = 4.8;
+
+@Parameter real a1 = 5.e-3;
+@Parameter real a2 = 0.0135;
+@Parameter real a3 = -0.4;
+
+@Parameter real a4 = 1.e-6;
+@Parameter real a5 = 2.5e-4;
+@Parameter real a6 = -6.25;
+
+@Parameter real a7 = 0.;
+@Parameter real a8 = 5.13;
+@Parameter real a9 = -0.3;
+
 //Hardening strain
 @StateVariable real epsCrV;
 
 @AuxiliaryStateVariable stress Udil;
 Udil.setEntryName("DilatancyWork");
+
+@AuxiliaryStateVariable real eps_vol;
+eps_vol.setEntryName("DilatancyStrain");
 
 //Recovery strain increment
 @LocalVariable real deps_cr_E;
@@ -64,6 +84,7 @@ Udil.setEntryName("DilatancyWork");
 @LocalVariable Stensor deps_cr;
 //Dilatancy volume strain increment
 @LocalVariable real deps_vol;
+
 
 
 //! Second Lamé coefficient
@@ -81,7 +102,6 @@ Udil.setEntryName("DilatancyWork");
   const auto norm_s = seq / std::sqrt(3. / 2.);
   const auto nulltensor = Stensor::Id() * 0.;
   constexpr auto Pdev = Stensor4::K();
-  
 
   // secondary (recovery)
   const auto b = As1 * std::exp(-Q1 / (Ru * T)) * std::pow(seq / sig0, ns1) +
@@ -98,20 +118,20 @@ Udil.setEntryName("DilatancyWork");
   if (norm_s > 1e-14 * mu) {
     fepsCrV = depsCrV -
               dt * (Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup)) -
-              deps_cr_E;
+              deps_cr_E - deps_vol;
     dfepsCrV_ddepsCrV =
         1. + dt * mup * Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup + 1);
     const auto dfepsCrV_dseq = -dt * (Ap * np * std::pow(seq / sig0, np - 1) /
                                       std::pow(epsV0 + epsCrV_new, mup)) -
                                db_dseq * dt;
     dfepsCrV_ddeel = dfepsCrV_dseq * 3. * s / (2. * seq) * 2. * mu;
-    deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E) * s / norm_s);
+    deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E + deps_vol) * s / norm_s);
     dfeel_ddepsCrV = std::sqrt(3. / 2.) / norm_s * s;
-    dfeel_ddeel +=
-        2. * mu * std::sqrt(3. / 2.) / norm_s * (
-        (depsCrV + deps_cr_E) * (Pdev - (s ^ s) / norm_s / norm_s) + db_dseq * dt * 3. / (2.*seq) * (s^s));
+    dfeel_ddeel += 2. * mu * std::sqrt(3. / 2.) / norm_s *
+                   ((depsCrV + deps_cr_E + deps_vol) * (Pdev - (s ^ s) / norm_s / norm_s) +
+                    db_dseq * dt * 3. / (2. * seq) * (s ^ s));
   } else {
-    fepsCrV = depsCrV - deps_cr_E;
+    fepsCrV = depsCrV - deps_cr_E - deps_vol;
     dfepsCrV_ddepsCrV = 1.;
     deps_cr = nulltensor;
   }
@@ -122,15 +142,22 @@ Udil.setEntryName("DilatancyWork");
 
 @UpdateAuxiliaryStateVariables
 {
-//http://tfel.sourceforge.net/tensors.html#eigenvalues-eigenvectors-and-eigentensors-of-symmetric-tensors
-	const auto seq = sigmaeq(deviator(sig));
-	const auto sig_p = sig.computeEigenValues(Stensor::DESCENDING);
-	const auto D1 = 8.;
-	const auto D2 = 0.25;
-	const auto D3 = 4.8;
-	const auto s3 = -sig_p(0); //sign change for compression convention
-	const auto seq_Dil = s3*(D1/(D2+s3)+D3);
-	if (seq - seq_Dil > 0.)
-		Udil += (seq - seq_Dil) * (depsCrV + deps_cr_E);
-}
+  // http://tfel.sourceforge.net/tensors.html#eigenvalues-eigenvectors-and-eigentensors-of-symmetric-tensors
+  const auto seq = sigmaeq(deviator(sig));
+  const auto sig_p = sig.computeEigenValues(Stensor::DESCENDING);
+  const auto s3 = -sig_p(0); // sign change for compression convention
+  const auto seq_Dil = s3 * (D1 / (D2 + s3) + D3);
 
+  const auto A1sig = a1 + a2 * std::exp(a3 * s3);
+  const auto A2sig = a4 + a5 * std::exp(a6 * s3);
+  const auto A3sig = a7 + a8 * std::exp(a9 * s3);
+
+  if (seq - seq_Dil > 0.) {
+    const auto dUdil = (seq - seq_Dil) * (depsCrV + deps_cr_E);
+    deps_vol = (A1sig + A2sig * std::exp(A3sig * Udil)) * dUdil;
+    eps_vol += deps_vol;
+    Udil += dUdil;
+  }
+  else
+    deps_vol = 0.;
+}
