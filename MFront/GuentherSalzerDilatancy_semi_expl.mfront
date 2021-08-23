@@ -71,6 +71,7 @@ Ru.setEntryName("UniversalGasConstant");
 
 //Hardening strain
 @StateVariable real epsCrV;
+epsCrV.setEntryName("HardeningStrain");
 
 @AuxiliaryStateVariable stress Udil;
 Udil.setEntryName("DilatancyWork");
@@ -117,12 +118,12 @@ eps_vol.setEntryName("DilatancyStrain");
 
   if (norm_s > 1e-14 * mu) {
     fepsCrV = depsCrV -
-              dt * (Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup)) -
-              deps_cr_E - deps_vol;
+              dt * (Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup)) +
+              deps_cr_E + deps_vol;
     dfepsCrV_ddepsCrV =
         1. + dt * mup * Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup + 1);
     const auto dfepsCrV_dseq = -dt * (Ap * np * std::pow(seq / sig0, np - 1) /
-                                      std::pow(epsV0 + epsCrV_new, mup)) -
+                                      std::pow(epsV0 + epsCrV_new, mup)) +
                                db_dseq * dt;
     dfepsCrV_ddeel = dfepsCrV_dseq * 3. * s / (2. * seq) * 2. * mu;
     deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E + deps_vol) * s / norm_s);
@@ -131,7 +132,7 @@ eps_vol.setEntryName("DilatancyStrain");
                    ((depsCrV + deps_cr_E + deps_vol) * (Pdev - (s ^ s) / norm_s / norm_s) +
                     db_dseq * dt * 3. / (2. * seq) * (s ^ s));
   } else {
-    fepsCrV = depsCrV - deps_cr_E - deps_vol;
+    fepsCrV = 0;
     dfepsCrV_ddepsCrV = 1.;
     deps_cr = nulltensor;
   }
