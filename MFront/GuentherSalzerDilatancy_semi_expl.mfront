@@ -18,6 +18,9 @@ and Modelling. Rock Mechanics and Rock Engineering,
 
 @Algorithm NewtonRaphson;
 @MaximumNumberOfIterations 100;
+//@CompareToNumericalJacobian true;
+//@PerturbationValueForNumericalJacobianComputation 1.e-8;
+//@JacobianComparisonCriterion 1e-7;
 
 @Epsilon 1.e-14;
 @Theta 1.0;
@@ -91,32 +94,35 @@ eps_vol.setEntryName("DilatancyStrain");
 //! Second Lamé coefficient
 @LocalVariable stress mu;
 
+@LocalVariable real As1T, As2T;
+
 @InitLocalVariables {
   mu = computeMu(young, nu);
   // Compute initial elastic strain
   eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
+  As1T = As1 * std::exp(-Q1 / (Ru * (T + dT)));
+  As2T = As2 * std::exp(-Q2 / (Ru * (T + dT)));
 }
 
 @Integrator {
+  const auto eeps = real(1e-14);
+  const auto seps = eeps * young;
   const auto s = deviator(sig);
   const auto seq = sigmaeq(s);
   const auto norm_s = seq / std::sqrt(3. / 2.);
-  const auto nulltensor = Stensor::Id() * 0.;
-  constexpr auto Pdev = Stensor4::K();
 
-  // secondary (recovery)
-  const auto b = As1 * std::exp(-Q1 / (Ru * T)) * std::pow(seq / sig0, ns1) +
-                 As2 * std::exp(-Q2 / (Ru * T)) * std::pow(seq / sig0, ns2);
-  const auto db_dseq = ns1 / sig0 * As1 * std::exp(-Q1 / (Ru * T)) *
-                           std::pow(seq / sig0, ns1 - 1) +
-                       ns2 / sig0 * As2 * std::exp(-Q2 / (Ru * T)) *
-                           std::pow(seq / sig0, ns2 - 1);
+  if (norm_s > seps) {
+    constexpr auto Pdev = Stensor4::K();
+    // secondary (recovery)
+    const auto b =
+        As1T * std::pow(seq / sig0, ns1) + As2T * std::pow(seq / sig0, ns2);
+    const auto db_dseq = ns1 / sig0 * As1T * std::pow(seq / sig0, ns1 - 1) +
+                         ns2 / sig0 * As2T * std::pow(seq / sig0, ns2 - 1);
 
-  deps_cr_E = b * dt;
-  const auto epsCrV_new = epsCrV + depsCrV;
-  const auto seq_to_np = std::pow(seq / sig0, np);
+    deps_cr_E = b * dt;
+    const auto epsCrV_new = epsCrV + depsCrV;
+    const auto seq_to_np = std::pow(seq / sig0, np);
 
-  if (norm_s > 1e-14 * mu) {
     fepsCrV = depsCrV -
               dt * (Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup)) +
               deps_cr_E + deps_vol;
@@ -126,19 +132,15 @@ eps_vol.setEntryName("DilatancyStrain");
                                       std::pow(epsV0 + epsCrV_new, mup)) +
                                db_dseq * dt;
     dfepsCrV_ddeel = dfepsCrV_dseq * 3. * s / (2. * seq) * 2. * mu;
-    deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E + deps_vol) * s / norm_s);
+    deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E + deps_vol) * s /
+                   norm_s);
+    feel += deps_cr;
     dfeel_ddepsCrV = std::sqrt(3. / 2.) / norm_s * s;
-    dfeel_ddeel += 2. * mu * std::sqrt(3. / 2.) / norm_s *
-                   ((depsCrV + deps_cr_E + deps_vol) * (Pdev - (s ^ s) / norm_s / norm_s) +
-                    db_dseq * dt * 3. / (2. * seq) * (s ^ s));
-  } else {
-    fepsCrV = 0;
-    dfepsCrV_ddepsCrV = 1.;
-    deps_cr = nulltensor;
+    dfeel_ddeel +=
+        2. * mu * std::sqrt(3. / 2.) / norm_s *
+        ((depsCrV + deps_cr_E + deps_vol) * (Pdev - (s ^ s) / norm_s / norm_s) +
+         db_dseq * dt * 3. / (2. * seq) * (s ^ s));
   }
-
-  // residuals
-  feel += deps_cr;
 }
 
 @UpdateAuxiliaryStateVariables
@@ -158,7 +160,6 @@ eps_vol.setEntryName("DilatancyStrain");
     deps_vol = (A1sig + A2sig * std::exp(A3sig * Udil)) * dUdil;
     eps_vol += deps_vol;
     Udil += dUdil;
-  }
-  else
+  } else
     deps_vol = 0.;
 }

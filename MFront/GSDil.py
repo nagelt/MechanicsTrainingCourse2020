@@ -1,9 +1,6 @@
 import mtest
 import numpy as np
 import matplotlib.pyplot as plt
-import os
-import plot_settings
-mtest.setVerboseMode(mtest.VerboseLevel.VERBOSE_QUIET)
 
 sig3 = 3. #5 works
 
@@ -11,9 +8,9 @@ t_discrete = np.linspace(0.,30.,1000)
 m    = mtest.MTest()
 m.setMaximumNumberOfSubSteps(10)
 m.setBehaviour('generic', 'src/libBehaviour.so', 'GuentherSalzerDilatancy_semi_expl')
-m.setImposedStress('SXX', -sig3)
-m.setImposedStress('SYY', -sig3)
-m.setImposedStrain('EZZ', {0: 0, 30.: -0.3})
+m.setImposedStress('SXX', {0: 0, 1: -sig3, 30: -sig3})
+m.setImposedStress('SYY', {0: 0, 1: -sig3, 30: -sig3})
+m.setImposedStrain('EZZ', {0: 0, 1: 0, 30.: -0.3})
 m.setImposedStress('SXZ', 0.0)
 m.setImposedStress('SYZ', 0.0)
 m.setImposedStress('SXY', 0.0)
@@ -48,6 +45,8 @@ for i in range(len(t_discrete)-1):
     evol = np.append(evol,s.getInternalStateVariableValue('DilatancyStrain'))
     sax = np.append(sax,s.s1[2])
     eax = np.append(eax,s.e1[2])
+
+print("Happily done")
 
 fig,ax = plt.subplots(figsize=(20,8),ncols=3)
 ax[0].plot(-eax[0:]*100,-sax[0:]-sig3, label= '$\\sigma_3 = %i$ MPa' %sig3)
