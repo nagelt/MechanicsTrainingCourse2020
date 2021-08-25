@@ -76,32 +76,44 @@ Ru.setEntryName("UniversalGasConstant");
 @StateVariable real epsCrV;
 epsCrV.setEntryName("HardeningStrain");
 
+//Dilatancy strain
+@StateVariable real eps_vol;
+eps_vol.setEntryName("DilatancyStrain");
+
 @AuxiliaryStateVariable stress Udil;
 Udil.setEntryName("DilatancyWork");
-
-@AuxiliaryStateVariable real eps_vol;
-eps_vol.setEntryName("DilatancyStrain");
 
 //Recovery strain increment
 @LocalVariable real deps_cr_E;
 //Creep strain increment
 @LocalVariable Stensor deps_cr;
-//Dilatancy volume strain increment
-@LocalVariable real deps_vol;
-
 
 
 //! Second Lamé coefficient
 @LocalVariable stress mu;
+//! First Lamé coefficient
+@LocalVariable stress lambda;
 
-@LocalVariable real As1T, As2T;
+@LocalVariable real As1T, As2T, s3_prev, seq_prev, seq_prev_Dil;
+@LocalVariable bool Fdil;
 
 @InitLocalVariables {
   mu = computeMu(young, nu);
+  lambda = computeLambda(young, nu);
   // Compute initial elastic strain
   eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
   As1T = As1 * std::exp(-Q1 / (Ru * (T + dT)));
   As2T = As2 * std::exp(-Q2 / (Ru * (T + dT)));
+
+  const Stensor eps_prev = eel - deel;
+  const Stensor sig_prev =
+      lambda * trace(eps_prev) * Stensor::Id() + 2. * mu * eps_prev;
+  seq_prev = sigmaeq(sig_prev);
+  const auto sig_p = sig_prev.computeEigenValues(Stensor::DESCENDING);
+  s3_prev = -sig_p(0); // sign change for compression convention
+  seq_prev_Dil = s3_prev * (D1 / (D2 + s3_prev) + D3);
+
+  Fdil = seq_prev - seq_prev_Dil > 0;
 }
 
 @Integrator {
@@ -113,6 +125,10 @@ eps_vol.setEntryName("DilatancyStrain");
 
   if (norm_s > seps) {
     constexpr auto Pdev = Stensor4::K();
+    const auto A1sig = a1 + a2 * std::exp(a3 * s3_prev);
+    const auto A2sig = a4 + a5 * std::exp(a6 * s3_prev);
+    const auto A3sig = a7 + a8 * std::exp(a9 * s3_prev);
+
     // secondary (recovery)
     const auto b =
         As1T * std::pow(seq / sig0, ns1) + As2T * std::pow(seq / sig0, ns2);
@@ -132,34 +148,36 @@ eps_vol.setEntryName("DilatancyStrain");
                                       std::pow(epsV0 + epsCrV_new, mup)) +
                                db_dseq * dt;
     dfepsCrV_ddeel = dfepsCrV_dseq * 3. * s / (2. * seq) * 2. * mu;
+    dfepsCrV_ddeps_vol = 1.;
     deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E + deps_vol) * s /
                    norm_s);
     feel += deps_cr;
     dfeel_ddepsCrV = std::sqrt(3. / 2.) / norm_s * s;
+    dfeel_ddeps_vol = std::sqrt(3. / 2.) / norm_s * s;
     dfeel_ddeel +=
         2. * mu * std::sqrt(3. / 2.) / norm_s *
         ((depsCrV + deps_cr_E + deps_vol) * (Pdev - (s ^ s) / norm_s / norm_s) +
          db_dseq * dt * 3. / (2. * seq) * (s ^ s));
+
+    feps_vol = deps_vol - (A1sig + A2sig * std::exp(A3sig * Udil)) *
+                              (seq_prev - seq_prev_Dil) *
+                              (depsCrV + deps_cr_E + deps_vol);
+    dfeps_vol_ddeps_vol = 1. - (A1sig + A2sig * std::exp(A3sig * Udil)) *
+                                   (seq_prev - seq_prev_Dil);
+    dfeps_vol_ddepsCrV =
+        -(A1sig + A2sig * std::exp(A3sig * Udil)) * (seq_prev - seq_prev_Dil);
+    dfeps_vol_ddeel = -(A1sig + A2sig * std::exp(A3sig * Udil)) *
+                      (seq_prev - seq_prev_Dil) * dt * db_dseq * 3. * s /
+                      (2. * seq) * 2. * mu;
   }
 }
 
 @UpdateAuxiliaryStateVariables
 {
   // http://tfel.sourceforge.net/tensors.html#eigenvalues-eigenvectors-and-eigentensors-of-symmetric-tensors
-  const auto seq = sigmaeq(deviator(sig));
-  const auto sig_p = sig.computeEigenValues(Stensor::DESCENDING);
-  const auto s3 = -sig_p(0); // sign change for compression convention
-  const auto seq_Dil = s3 * (D1 / (D2 + s3) + D3);
-
-  const auto A1sig = a1 + a2 * std::exp(a3 * s3);
-  const auto A2sig = a4 + a5 * std::exp(a6 * s3);
-  const auto A3sig = a7 + a8 * std::exp(a9 * s3);
-
-  if (seq - seq_Dil > 0.) {
-    const auto dUdil = (seq - seq_Dil) * (depsCrV + deps_cr_E);
-    deps_vol = (A1sig + A2sig * std::exp(A3sig * Udil)) * dUdil;
-    eps_vol += deps_vol;
+  if (seq_prev - seq_prev_Dil > 0.) {
+    const auto dUdil =
+        (seq_prev - seq_prev_Dil) * (depsCrV + deps_cr_E + deps_vol);
     Udil += dUdil;
-  } else
-    deps_vol = 0.;
+  }
 }
