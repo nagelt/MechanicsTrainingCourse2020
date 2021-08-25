@@ -11,14 +11,9 @@
 
 @MaterialProperty<constant> 'YoungModulus' 25.e4; 
 @MaterialProperty<constant> 'PoissonRatio' 0.27; 
-@MaterialProperty<constant> 'PrimaryPowerLawFactor' 6.5e-24;
-@MaterialProperty<constant> 'PrimaryPowerLawExponent' 11.;
 @MaterialProperty<constant> 'SecondaryPowerLawFactor1' 0.00;
 @MaterialProperty<constant> 'SecondaryPowerLawExponent1' 4.0;
 @MaterialProperty<constant> 'SecondaryActivationEnergy1' 40.e3;
 @MaterialProperty<constant> 'SecondaryPowerLawFactor2' 0.00;
 @MaterialProperty<constant> 'SecondaryPowerLawExponent2' 1.0;
 @MaterialProperty<constant> 'SecondaryActivationEnergy2' 65.e3;
-@MaterialProperty<constant> 'HardeningExponent' 2.95;
-@MaterialProperty<constant> 'InitialHardening' 0.001;
-@MaterialProperty<constant> 'ReferenceStress' 1.;

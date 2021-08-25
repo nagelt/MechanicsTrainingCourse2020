@@ -14,6 +14,8 @@ Günther, R.-M., Salzer, K., Popp, T., & Lüdeling, C. (2015).
 Steady-State Creep of Rock Salt: Improved Approaches for Lab Determination 
 and Modelling. Rock Mechanics and Rock Engineering, 
 48(6), 2603–2613. https://doi.org/10.1007/s00603-015-0839-2
+
+Parameters: Asse
 };
 
 @Algorithm NewtonRaphson;
@@ -28,10 +30,6 @@ and Modelling. Rock Mechanics and Rock Engineering,
 @ModellingHypotheses{".+"};
 @Brick StandardElasticity;
 
-@MaterialProperty real Ap;
-Ap.setEntryName("PrimaryPowerLawFactor");
-@MaterialProperty real np;
-np.setEntryName("PrimaryPowerLawExponent");
 @MaterialProperty real As1;
 As1.setEntryName("SecondaryPowerLawFactor1");
 @MaterialProperty real ns1;
@@ -44,22 +42,34 @@ As2.setEntryName("SecondaryPowerLawFactor2");
 ns2.setEntryName("SecondaryPowerLawExponent2");
 @MaterialProperty real Q2;
 Q2.setEntryName("SecondaryActivationEnergy2");
-@MaterialProperty real mup;
-mup.setEntryName("HardeningExponent");
-@MaterialProperty real epsV0;
-epsV0.setEntryName("InitialHardening");
-@PhysicalBounds epsV0 in [1e-6:*[; //practical limit
-@MaterialProperty real sig0;
-sig0.setEntryName("ReferenceStress");
 
+// Activation energies in input files in J/mol
 @Parameter real Ru = 8.314472; // J/(Kmol)
 Ru.setEntryName("UniversalGasConstant");
 
+// Units: MPa, d
 
+// Reference stress
+@Parameter real sig0 = 1.;
+
+// initial hardenging -- can be critical for initial convergence!
+@Parameter real epsV0 = 1.e-3;
+
+// primary power law and stress/dilatancy dependence
+@Parameter real Ap = 3.98e-29;
+@Parameter real mup = 3.0;
+@Parameter real np0 = 15.18;
+@Parameter real n1 = 0.8;
+@Parameter real n2 = -0.33;
+@Parameter real n3 = 2000.;
+@Parameter real n4 = 0.5;
+
+// Dilatancy boundary
 @Parameter real D1 = 8.;
 @Parameter real D2 = 0.25;
 @Parameter real D3 = 4.8;
 
+// dilatancy strain evolution
 @Parameter real a1 = 5.e-3;
 @Parameter real a2 = 0.0135;
 @Parameter real a3 = -0.4;
@@ -72,22 +82,23 @@ Ru.setEntryName("UniversalGasConstant");
 @Parameter real a8 = 5.13;
 @Parameter real a9 = -0.3;
 
-//Hardening strain
+// Hardening strain
 @StateVariable real epsCrV;
 epsCrV.setEntryName("HardeningStrain");
 
-//Dilatancy strain
+// Dilatancy strain
 @StateVariable real eps_vol;
 eps_vol.setEntryName("DilatancyStrain");
 
 @AuxiliaryStateVariable stress Udil;
 Udil.setEntryName("DilatancyWork");
 
-//Recovery strain increment
+// Recovery strain increment
 @LocalVariable real deps_cr_E;
-//Creep strain increment
+// Creep strain increment
 @LocalVariable Stensor deps_cr;
 
+@LocalVariable real np; // corrected stress exponents
 
 //! Second Lamé coefficient
 @LocalVariable stress mu;
@@ -110,6 +121,9 @@ Udil.setEntryName("DilatancyWork");
   const auto sig_p = sig_prev.computeEigenValues(Stensor::DESCENDING);
   s3_prev = -sig_p(0); // sign change for compression convention
   seq_prev_Dil = s3_prev * (D1 / (D2 + s3_prev) + D3);
+
+  np = (np0 + n1 * std::exp(n2 * s3_prev) * (1. - std::exp(-n3 * eps_vol))) /
+       std::pow(1. - eps_vol, n4);
 }
 
 @Integrator {
@@ -147,7 +161,7 @@ Udil.setEntryName("DilatancyWork");
                                db_dseq * dt;
     dfepsCrV_ddeel = dfepsCrV_dseq * dseq_ddeel;
     dfepsCrV_ddeps_vol = 1.;
-    deps_cr = eval(std::sqrt(3. / 2.) * deps_cr_tot*s / norm_s);
+    deps_cr = eval(std::sqrt(3. / 2.) * deps_cr_tot * s / norm_s);
     feel += deps_cr;
     dfeel_ddepsCrV = std::sqrt(3. / 2.) / norm_s * s;
     dfeel_ddeps_vol = std::sqrt(3. / 2.) / norm_s * s;
@@ -162,15 +176,14 @@ Udil.setEntryName("DilatancyWork");
       feps_vol = deps_vol - s_m_sdil_Ai_Udil * deps_cr_tot;
       dfeps_vol_ddeps_vol = 1. - s_m_sdil_Ai_Udil;
       dfeps_vol_ddepsCrV = -s_m_sdil_Ai_Udil;
-      dfeps_vol_ddeel = - 
-          (s_m_sdil_Ai_Udil * dt * db_dseq +
-          Ai_Udil * deps_cr_tot)*dseq_ddeel;
+      dfeps_vol_ddeel =
+          -(s_m_sdil_Ai_Udil * dt * db_dseq + Ai_Udil * deps_cr_tot) *
+          dseq_ddeel;
     }
   }
 }
 
-@UpdateAuxiliaryStateVariables
-{
+@UpdateAuxiliaryStateVariables {
   const auto seq = sigmaeq(sig);
   if (seq - seq_prev_Dil > 0.) {
     const auto dUdil = (seq - seq_prev_Dil) * (depsCrV + deps_cr_E + deps_vol);
