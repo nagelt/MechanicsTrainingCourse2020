@@ -4,8 +4,8 @@
     <points>
         <point id="0" x="0.1" y="0" z="0"/>
         <point id="1" x="0.1" y="5" z="0"/>
-        <point id="2" x="100" y="5" z="0"/>
-        <point id="3" x="100" y="0" z="0"/>
+        <point id="2" x="100.1" y="5" z="0"/>
+        <point id="3" x="100.1" y="0" z="0"/>
     </points>
     <polylines>
         <polyline id="0" name="Left">
