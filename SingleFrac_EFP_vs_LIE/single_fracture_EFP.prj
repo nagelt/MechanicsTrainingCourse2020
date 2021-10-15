@@ -182,6 +182,7 @@
                     <initial_aperture>0</initial_aperture>
                     <threshold_strain>-0.01</threshold_strain>
                     <fracture_normal>0 1 0</fracture_normal>
+                    <jacobian_factor>1.0</jacobian_factor>
                 </property>
             </properties>
         </medium>
