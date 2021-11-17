@@ -79,7 +79,7 @@ epsCrV.setEntryName("HardeningStrain");
   const auto eeps = real(1e-14);
   const auto seps = eeps * young;
   const auto s = deviator(sig);
-  const auto seq = std::max(sigmaeq(s),eeps);
+  const auto seq = std::max(sigmaeq(s),seps);
   const auto norm_s = seq / std::sqrt(3. / 2.);
 
     constexpr auto Pdev = Stensor4::K();
