@@ -46,7 +46,7 @@ Q2.setEntryName("SecondaryActivationEnergy2");
 mup.setEntryName("HardeningExponent");
 @MaterialProperty real epsV0;
 epsV0.setEntryName("InitialHardening");
-@PhysicalBounds epsV0 in [1e-6:*[; //practical limit
+@PhysicalBounds epsV0 in [1e-14:*[; //practical limit
 @MaterialProperty real sig0;
 sig0.setEntryName("ReferenceStress");
 
@@ -79,10 +79,9 @@ epsCrV.setEntryName("HardeningStrain");
   const auto eeps = real(1e-14);
   const auto seps = eeps * young;
   const auto s = deviator(sig);
-  const auto seq = sigmaeq(s);
+  const auto seq = std::max(sigmaeq(s),eeps);
   const auto norm_s = seq / std::sqrt(3. / 2.);
 
-  if (norm_s > seps) {
     constexpr auto Pdev = Stensor4::K();
     // secondary (recovery)
     const auto b =
@@ -109,6 +108,5 @@ epsCrV.setEntryName("HardeningStrain");
     dfeel_ddeel += 2. * mu * std::sqrt(3. / 2.) / norm_s *
                    ((depsCrV + deps_cr_E) * (Pdev - (s ^ s) / norm_s / norm_s) +
                     db_dseq * dt * 3. / (2. * seq) * (s ^ s));
-  }
   }
   
