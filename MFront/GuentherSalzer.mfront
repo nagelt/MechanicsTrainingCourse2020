@@ -92,14 +92,28 @@ epsCrV.setEntryName("HardeningStrain");
     deps_cr_E = b * dt;
     const auto epsCrV_new = epsCrV + depsCrV;
     const auto seq_to_np = std::pow(seq / sig0, np);
-
+    const auto b_total = Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup);
+    
+    auto epsV0m = epsV0;
+    const auto max_creep_rate = 10.;
+    if (b_total < b)
+    {
+        epsV0m = std::pow(Ap * seq_to_np / b,1/mup) - epsCrV_new;
+        epsV0m = epsV0;
+    }
+    if (b_total > max_creep_rate)
+    {
+        epsV0m = std::pow(Ap * seq_to_np / max_creep_rate,1/mup) - epsCrV_new;
+        epsV0m = epsV0;
+    }
+    
     fepsCrV = depsCrV -
-              dt * (Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup)) +
+              dt * (Ap * seq_to_np / std::pow(epsV0m + epsCrV_new, mup)) +
               deps_cr_E;
     dfepsCrV_ddepsCrV =
-        1. + dt * mup * Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup + 1);
+        1. + dt * mup * Ap * seq_to_np / std::pow(epsV0m + epsCrV_new, mup + 1);
     const auto dfepsCrV_dseq = -dt * (Ap * np * std::pow(seq / sig0, np - 1) /
-                                      std::pow(epsV0 + epsCrV_new, mup)) +
+                                      std::pow(epsV0m + epsCrV_new, mup)) +
                                db_dseq * dt;
     dfepsCrV_ddeel = dfepsCrV_dseq * 3. * s / (2. * seq) * 2. * mu;
     deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E) * s / norm_s);
