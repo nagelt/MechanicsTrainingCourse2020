@@ -53,7 +53,7 @@ Ru.setEntryName("UniversalGasConstant");
 @Parameter real sig0 = 1.;
 
 // initial hardenging -- can be critical for initial convergence!
-@Parameter real epsV0 = 1.e-3;
+@Parameter real epsV0 = 1.e-8;
 
 // primary power law and stress/dilatancy dependence
 @Parameter real Ap = 3.98e-29;
@@ -130,10 +130,9 @@ Udil.setEntryName("DilatancyWork");
   const auto eeps = real(1e-16);
   const auto seps = eeps * young;
   const auto s = deviator(sig);
-  const auto seq = sigmaeq(sig);
+  const auto seq = std::max(sigmaeq(s),seps);
   const auto norm_s = seq / std::sqrt(3. / 2.);
 
-  if (norm_s > seps) {
     constexpr auto Pdev = Stensor4::K();
     const auto A1sig = a1 + a2 * std::exp(a3 * s3_prev);
     const auto A2sig = a4 + a5 * std::exp(a6 * s3_prev);
@@ -179,7 +178,6 @@ Udil.setEntryName("DilatancyWork");
       dfeps_vol_ddeel =
           -(s_m_sdil_Ai_Udil * dt * db_dseq + Ai_Udil * deps_cr_tot) *
           dseq_ddeel;
-    }
   }
 }
 
