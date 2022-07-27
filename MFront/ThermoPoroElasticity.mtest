@@ -1,0 +1,36 @@
+@Author Thomas Nagel;
+@Date 26/07/2022;
+@Description {
+Isochoric drained heating
+};
+
+@ModellingHypothesis 'Tridimensional';
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> 'src/libBehaviour.so' 'ThermoPoroElasticity';
+
+
+
+@MaterialProperty<constant> 'YoungModulus' 10e9;
+@MaterialProperty<constant> 'PoissonRatio' 0.3;
+@MaterialProperty<constant> 'ThermalExpansion' 1e-5;
+@MaterialProperty<constant> 'BiotCoefficient' 1.0;
+@MaterialProperty<constant> 'BishopsExponent' 1.0;
+@MaterialProperty<constant> 'ResidualLiquidSaturation' 0.0;
+@MaterialProperty<constant> 'ResidualGasSaturation' 0.0;
+@MaterialProperty<constant> 'BubblePressure' 5e5;
+@MaterialProperty<constant> 'VanGenuchtenExponent_m' 2.4;
+
+@ExternalStateVariable 'Temperature' {0 : 293, 1 : 333};
+
+
+@ImposedGradient 'LiquidPressure' {0:0, 1:0};
+
+@ImposedGradient 'StrainXX' {0:0, 1:0};
+@ImposedGradient 'StrainYY' {0:0, 1:0};
+@ImposedGradient 'StrainZZ' {0:0, 1:0};
+@ImposedGradient 'StrainXY' {0:0, 1:0};
+@ImposedGradient 'StrainXZ' {0:0, 1:0};
+@ImposedGradient 'StrainYZ' {0:0, 1:0};
+
+
+@Times {0,1 in 10};
