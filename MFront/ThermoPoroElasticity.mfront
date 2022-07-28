@@ -3,6 +3,10 @@
 @Author Thomas Nagel;
 @Date 26 / 07 / 2022;
 @Description {
+A simple linear THM model returning
+total stress. Combines linear isotropic
+thermo-elasticity with van Genuchten retention
+and a Bishop's power law.
 }
 
 @Gradient StrainStensor εᵗᵒ;
