@@ -6,7 +6,7 @@
 A simple linear THM model returning
 total stress. Combines linear isotropic
 thermo-elasticity with van Genuchten retention
-and a Bishop's power law.
+and a Bishop'''s power law.
 }
 
 @Gradient StrainStensor εᵗᵒ;
