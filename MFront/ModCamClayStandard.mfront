@@ -1,0 +1,165 @@
+@DSL Implicit;
+@Behaviour ModCamClayStandard;
+@Author Eric Simo, Miguel Mánica;
+@Date 16 / 10 / 22;
+@Description {
+    The modified Cam clay model represents a classical critical state model based on the theory of plasticity. The main features of the model are similar to the hypoplastic model for clay. Unlike the hypoplastic models the modified Cam clay model distinguishes the elastic and plastic part of strain components and therefore allows for straightforward visualization of permanently strained plastic zones. On the other hand the onset of plastic behavior and the associated change of stiffness is sudden and not gradual as in hypoplastic models. 
+    
+    The modified Cam clay model takes into account the following important properties of soils:
+    
+    Stiffness and strength depend on the current level of effective stress σ
+    
+    Stiffness and strength depend on the current density characterized by the void ratio e
+    
+    Stiffness depends on the direction of loading (loading vs. unloading)
+}
+
+// integration information
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Theta 1.0; // time integration scheme
+@Epsilon 1e-12;
+
+// material properties
+@MaterialProperty real Kappa;
+Kappa.setEntryName("SwellingLineSlope");
+
+@MaterialProperty real poisson;
+poisson.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real M;
+@PhysicalBounds M in [0:2];
+M.setEntryName("CriticalStateLineSlope");
+
+@MaterialProperty real Lambda;
+@PhysicalBounds Lambda in [0:*[;
+Lambda.setEntryName("VirginConsolidationLineSlope");
+
+@MaterialProperty real pc0;
+//@PhysicalBounds pc0 in ]*:0[;
+pc0.setEntryName("InitialPreConsolidationPressure");
+
+@MaterialProperty real e0;
+//@PhysicalBounds e_0 in ]0:15[;
+e0.setEntryName("InitialVoidRatio");
+
+// local variables
+@LocalVariable StiffnessTensor De;
+@LocalVariable StressStensor sig0;
+@LocalVariable bool integration; 
+
+// state variables
+@StateVariable stress pc;
+pc.setEntryName("PreConsolidationPressure");
+@StateVariable real lambda;
+
+@AuxiliaryStateVariable real e;
+//e.setGlossaryName("voidratio");
+
+// elastic stiffness, predictor, and verification of the yield condition
+@InitLocalVariables {
+  // initialisation of local variables
+  const auto M2 = M * M;
+  if (pc < 1e-5 && pc > -1e-5) {
+    pc = pc0;
+  }
+
+  // e initialisation
+  if (e < 1e-5 && e > -1e-5) {
+	  e = e0;
+  } 
+
+  // update sig0
+  sig0 = sig;
+
+  // compute elastic stiffness
+  const auto bulk = (1.0 + e0) * -trace(sig) / 3.0 / Kappa;
+  const auto young = 3.0 * bulk * (1.0 - 2.0 * poisson);
+  const auto lame_lambda = computeLambda(young, poisson);
+  const auto lame_mu = computeMu(young, poisson);
+  De = lame_lambda * Stensor4::IxI() + 2 * lame_mu * Stensor4::Id();
+
+  // elastic trial stress
+  const auto sig_el = sig0 + De * deto; 
+
+  // stress invariants
+  const auto p = trace(sig_el) / 3.0; 
+  const auto s = deviator(sig_el);  
+  const auto q = std::sqrt(1.5 * s | s); 
+
+  // yield function
+  const auto yield = q * q - M2 * (p * (pc - p));
+  //std::cout<<"yield : "<<yield<<std::endl;
+
+   // verify if stress integration is required
+  integration = false;
+  if (yield > 0.0) {
+    integration = true;
+  } 
+}
+
+@ComputeStress {
+  sig = sig0 + theta * De * deel; 
+}
+
+// integration of constitutive equations
+@Integrator {
+  // elastic part
+  if (integration == false) {
+    feel -= deto; 
+  }
+
+  // plastic part 
+  if (integration) {
+    // initialisation of local variables
+    const auto v0 = 1.0 + e0; 
+    const auto s = deviator(sig);
+    const auto p = trace(sig) / 3;
+    const auto q = std::sqrt(1.5 * s | s);
+    const auto J2 = 0.5*trace(square(s)); 
+    constexpr const auto id  = stensor<N,real>::Id(); 
+
+    // yield function :  
+    const auto f = q*q - M*M*p*(pc - p); 
+
+    // stress invariants first derivatives with respect to stresses
+      const auto d_p_d_sig = id/3.0;
+      const auto d_J2_d_sig = s;
+      const auto d_q_d_sig = sqrt(3.0)/2.0/sqrt(J2)*d_J2_d_sig;
+
+    // yield function derivative with respect to stresses
+      auto dfdp = M*M*p - M*M*(-p + pc);
+      const auto dfdq = 2*q;
+      const auto dfdsig = dfdp*d_p_d_sig + dfdq*d_q_d_sig;
+
+    // residual of strain 
+    feel = deel - deto + dlambda * dfdsig; 
+
+    //residual of yield function: consistency condition
+    flambda = f/De(0, 0); 
+
+    // residual of the state variable pc 
+    fpc = dpc + v0 * pc / (Lambda - Kappa)* dlambda* trace(dfdsig);//dfdp;  
+      // the following equation also works with dfdp instead of dfdsig  
+      // fpc = dpc + v0 * pc / (Lambda - Kappa)* dlambda*dfdp;  
+
+  }
+}
+
+// compute resulting stresses
+@ComputeFinalStress {
+  // updating the stress at the end of the time step
+  sig = sig0 + De * deel;
+}
+
+// updating the void ratio at the end of the time step
+@UpdateAuxiliaryStateVariables {
+  e += (1+e0)*trace(deto);  
+  //std::cout<<"e : "<<e<<std::endl; 
+}
+
+// compute consistent tangent operator
+@TangentOperator {
+  Stensor4 Je;
+  getPartialJacobianInvert(Je);
+  Dt = De * Je;
+}
