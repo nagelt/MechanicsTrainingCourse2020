@@ -53,7 +53,7 @@ pc.setEntryName("PreConsolidationPressure");
 @StateVariable real lambda;
 
 @AuxiliaryStateVariable real e;
-//e.setGlossaryName("voidratio");
+e.setEntryName("VoidRatio");
 
 // elastic stiffness, predictor, and verification of the yield condition
 @InitLocalVariables {
