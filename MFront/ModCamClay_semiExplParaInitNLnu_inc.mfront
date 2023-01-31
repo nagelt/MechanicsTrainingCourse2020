@@ -1,6 +1,6 @@
 @DSL Implicit;
 @Behaviour ModCamClay_semiExplParaInitNLnu_inc;
-@Author Christian Silbermann, Eric Simo, Miguel Mánica, Thomas Helfer, Thomas Nagel;
+@Author Christian Silbermann, Miguel Mánica, Eric Simo, Thomas Helfer, Thomas Nagel;
 @Date 10/01/2023;
 @Description{
     The modified cam-clay model according to Callari (1998):
