@@ -3,7 +3,7 @@
 @Description{
 
 };
-@Behaviour<generic> 'src/libBehaviour.so' 'Lubby2';
+@Behaviour<generic> 'src/libsrc/libBehaviour.so' 'Lubby2';
 @ExternalStateVariable 'Temperature' 293.15;
 @ImposedStrain<function> 'EXX' '0.0';
 @ImposedStrain<function> 'EYY' '0.0';

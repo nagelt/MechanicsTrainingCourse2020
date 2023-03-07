@@ -1,0 +1,19 @@
+@Behaviour<generic> 'src/libsrc/libBehaviour.so' 'GuentherSalzerDilatancy_semi_expl';
+@MaximumNumberOfSubSteps 10;
+@ExternalStateVariable 'Temperature' 299.;
+@ImposedStress 'SXX' {0: 0, 1: -1.0, 30: -1.0};
+@ImposedStress 'SYY' {0: 0, 1: -1.0, 30: -1.0};
+@ImposedStress 'SXY' '0.0';
+@ImposedStress 'SXZ' '0.0';
+@ImposedStress 'SYZ' '0.0';
+@ImposedStrain 'EZZ' {0: 0, 1: 0, 30:-0.3};
+@Times {0.,30 in 1000};
+
+@MaterialProperty<constant> 'YoungModulus' 25.e4; 
+@MaterialProperty<constant> 'PoissonRatio' 0.27; 
+@MaterialProperty<constant> 'SecondaryPowerLawFactor1' 0.00;
+@MaterialProperty<constant> 'SecondaryPowerLawExponent1' 4.0;
+@MaterialProperty<constant> 'SecondaryActivationEnergy1' 40.e3;
+@MaterialProperty<constant> 'SecondaryPowerLawFactor2' 0.00;
+@MaterialProperty<constant> 'SecondaryPowerLawExponent2' 1.0;
+@MaterialProperty<constant> 'SecondaryActivationEnergy2' 65.e3;

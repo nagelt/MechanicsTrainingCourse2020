@@ -11,19 +11,19 @@
 @ImposedStress<function> 'SXY' '0.0';
 @ImposedStress<function> 'SXZ' '0.0';
 @ImposedStress<function> 'SYZ' '0.0';
-@ImposedStress 'SZZ' {0: 0, 1:16, 60:16, 61:25, 200:25};
-@Times {0.,200 in 200};
+@ImposedStress 'SZZ' {0: 0.1};
+@Times {0.,200 in 100};
 
-@MaterialProperty<constant> 'YoungModulus' 25e3; 
+@MaterialProperty<constant> 'YoungModulus' 25e4; 
 @MaterialProperty<constant> 'PoissonRatio' 0.27; 
-@MaterialProperty<constant> 'PrimaryPowerLawFactor' 6.5e-24;
-@MaterialProperty<constant> 'PrimaryPowerLawExponent' 11.;
+@MaterialProperty<constant> 'PrimaryPowerLawFactor' 5.5e-40;
+@MaterialProperty<constant> 'PrimaryPowerLawExponent' 19.6;
 @MaterialProperty<constant> 'SecondaryPowerLawFactor1' 0.05;
-@MaterialProperty<constant> 'SecondaryPowerLawExponent1' 2.7;
+@MaterialProperty<constant> 'SecondaryPowerLawExponent1' 1.35;
 @MaterialProperty<constant> 'SecondaryActivationEnergy1' 40e3;
 @MaterialProperty<constant> 'SecondaryPowerLawFactor2' 0.02;
 @MaterialProperty<constant> 'SecondaryPowerLawExponent2' 6.8;
 @MaterialProperty<constant> 'SecondaryActivationEnergy2' 65.e3;
-@MaterialProperty<constant> 'HardeningExponent' 2.95;
-@MaterialProperty<constant> 'InitialHardening' 0.01;
+@MaterialProperty<constant> 'HardeningExponent' 5.25;
+@MaterialProperty<constant> 'InitialHardening' 0.0001;
 @MaterialProperty<constant> 'ReferenceStress' 1.;
