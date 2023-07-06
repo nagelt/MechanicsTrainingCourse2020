@@ -33,7 +33,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e+0 1e-9 1e-9</abstols>
+                    <abstols>1e-2 1e-10 1e-10</abstols>
                 </convergence_criterion>
                 <!-- <compensate_non_equilibrium_initial_residuum>true</compensate_non_equilibrium_initial_residuum> -->
                 <time_discretization>
@@ -45,8 +45,8 @@
                     <t_end>2000</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>20</repeat>
-                            <delta_t>100</delta_t>
+                            <repeat>200</repeat>
+                            <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -62,7 +62,7 @@
                 </pair>
             </timesteps>
             <variables>
-                <variable>pressure</variable>
+                <variable>pressure_interpolated</variable>
                 <variable>displacement</variable>
             </variables>
         </output>
@@ -175,14 +175,14 @@
                 </property>
                 <property>
                     <name>permeability</name>
-                    <type>EmbeddedFracturePermeability</type>
-                    <intrinsic_permeability>1e-21</intrinsic_permeability>
-                    <mean_frac_distance>0.001</mean_frac_distance>
-                    <initial_aperture>0</initial_aperture>
-                    <threshold_strain>-0.01</threshold_strain>
+                    <type>OrthotropicEmbeddedFracturePermeability</type>
+                    <intrinsic_permeability>k</intrinsic_permeability>
+                    <mean_frac_distances>1.00e-03 1.00e-03 1.00e-03</mean_frac_distances>
+                    <threshold_strains>1.00e-02 -1.00e-02 1.00e-02</threshold_strains>
+                    <fracture_normals> 1 0 0    0 1 0 </fracture_normals>
                     <fracture_rotation_xy>zero</fracture_rotation_xy>
                     <fracture_rotation_yz>zero</fracture_rotation_yz>
-                    <jacobian_factor>1.0</jacobian_factor>
+                    <jacobian_factor>1</jacobian_factor>
                 </property>
             </properties>
         </medium>
@@ -206,6 +206,11 @@
             <name>nu</name>
             <type>Constant</type>
             <value>0</value>
+        </parameter>
+        <parameter>
+            <name>k</name>
+            <type>Constant</type>
+            <value>0.0</value>
         </parameter>
         <!-- Flow properties -->
         <parameter>
@@ -251,8 +256,8 @@
         <!-- Mass flow curve -->
         <curve>
             <name>curve_q_in</name>
-            <coords>1 1000 1001 2000</coords>
-            <values>3.00e-02 3.00e-02 -3.00e-02 -3.00e-02</values>
+            <coords>0 100 1000 1100 2000</coords>
+            <values>0.00e+00 3.00e-02 3.00e-02 -3.00e-02 -3.00e-02</values>
         </curve>
         <!-- Pressure curve -->
         <curve>
